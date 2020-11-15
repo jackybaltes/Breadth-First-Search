@@ -1,0 +1,680 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>Breadth First Search</title>
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/ntnuerc.css">
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+        <script src="https://daybrush.com/scenejs/release/latest/dist/scene.min.js"></script>
+		
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+        <script src="js/ntnu.js"></script>
+    </head>
+    <body>
+        <div class="reveal">
+        <div class="slides">
+            
+<section id="start" data-state="start">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Breadth First Search</h1>
+
+<p>
+      Jacky Baltes<br>
+      National Taiwan Normal University<br>
+      Taipei, Taiwan<br>
+      <a href="mailto:jacky.baltes@ntnu.edu.tw">jacky.baltes@ntnu.edu.tw</a><br>
+</p>
+
+<class 'datetime.date'>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-fd5f8b0d-ee2f-4d8c-901e-a2ee2bb449df" ><span id="id-fd5f8b0d-ee2f-4d8c-901e-a2ee2bb449df"><img id="img-id-fd5f8b0d-ee2f-4d8c-901e-a2ee2bb449df"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-62c85269-c60f-467e-80b2-9bd9fa47484d" ><span id="id-62c85269-c60f-467e-80b2-9bd9fa47484d"><img id="img-id-62c85269-c60f-467e-80b2-9bd9fa47484d" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00003_frag_00001" data-state="slide_00003_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>AI Problems</h1>
+
+<div class="jb-text">
+<ul>
+<li><b>Depth First Search (DFS)</b> expands a search tree from the root to the leaves (top to bottom)</li>
+<li>The children of a node are expanded first from left to right</li>
+<ul>
+<li>DFS may not find the optimal solution (fewest number of steps from the root)
+<li>This may cause problems because a subtree may be very deep or even infinite</li>
+<li>All the work done is wasted if we have to backtrack</li>
+</ul>
+<li>Breadth First Search (BFS) expands a search level by level.</li>
+<ul>
+<li>Search will not fall into a deep or infinite subtree</li>
+<li>Guaranteed to find shortest path solution. If a solution can be found at the top of the tree, then BFS will find it</li>
+</ul>
+</ul>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-dd8a31d2-952a-4ced-95b6-25f4eea2eac5" ><span id="id-dd8a31d2-952a-4ced-95b6-25f4eea2eac5"><img id="img-id-dd8a31d2-952a-4ced-95b6-25f4eea2eac5"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-8ced9d2d-3288-44a1-b066-1733fc539b4c" ><span id="id-8ced9d2d-3288-44a1-b066-1733fc539b4c"><img id="img-id-8ced9d2d-3288-44a1-b066-1733fc539b4c" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00004_frag_00001" data-state="slide_00004_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+<div class="jb-input jb-render jb-code" style="text-align:center">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-input-code jb-render">
+<div style="font-size:0.5em"><!-- start of style="font-size:0.5em" -->
+<div class="highlight" style="background: #f8f8f8; color:#101010;display=inline-block;"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">graphviz</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">gv</span>
+<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">os</span>
+
+<span style="color: #008000">dir</span> <span style="color: #666666">=</span> <span style="color: #BA2121">&#39;/content/images/&#39;</span>
+os<span style="color: #666666">.</span>system( <span style="color: #BA2121">f&quot;mkdir </span><span style="color: #BB6688; font-weight: bold">{</span><span style="color: #008000">dir</span><span style="color: #BB6688; font-weight: bold">}</span><span style="color: #BA2121">&quot;</span>)
+
+NO_SOLUTION, SOLUTION, POSSIBLE_SOLUTION <span style="color: #666666">=</span> <span style="color: #666666">0</span>,<span style="color: #666666">1</span>,<span style="color: #666666">2</span>
+
+<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">is_valid</span>( table ):
+
+  <span style="color: #008000; font-weight: bold">if</span> ( table[<span style="color: #666666">1</span>] <span style="color: #666666">==</span> <span style="color: #008000">len</span>(table) ):
+    <span style="color: #008000; font-weight: bold">return</span> SOLUTION
+
+  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #008000; font-weight: bold">None</span> <span style="color: #AA22FF; font-weight: bold">in</span> table:
+    <span style="color: #008000; font-weight: bold">return</span> POSSIBLE_SOLUTION
+  <span style="color: #008000; font-weight: bold">else</span>:
+    <span style="color: #008000; font-weight: bold">return</span> NO_SOLUTION
+
+<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">bickering_brothers_csp</span>( n_brothers, first_solution <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">False</span>, dfs <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">True</span> ):
+  initial <span style="color: #666666">=</span> [ <span style="color: #008000; font-weight: bold">None</span> ] <span style="color: #666666">*</span> n_brothers
+  queue <span style="color: #666666">=</span> []
+  g <span style="color: #666666">=</span> gv<span style="color: #666666">.</span>Digraph( comment<span style="color: #666666">=</span><span style="color: #BA2121">&#39;Breadth First Search&#39;</span> )
+  img <span style="color: #666666">=</span> <span style="color: #666666">0</span>
+
+  queue<span style="color: #666666">.</span>append( (initial,<span style="color: #666666">0</span>, [] ) )
+  num_nodes <span style="color: #666666">=</span> <span style="color: #008000">len</span>(queue)
+  sols <span style="color: #666666">=</span> []
+
+  <span style="color: #008000; font-weight: bold">if</span> dfs:
+    pop_index <span style="color: #666666">=</span> <span style="color: #666666">-1</span>
+  <span style="color: #008000; font-weight: bold">else</span>:
+    pop_index <span style="color: #666666">=</span> <span style="color: #666666">0</span>
+
+  <span style="color: #008000; font-weight: bold">while</span>( <span style="color: #008000">len</span>(queue) <span style="color: #666666">&gt;</span> <span style="color: #666666">0</span> ):
+    current, level, parent <span style="color: #666666">=</span> queue<span style="color: #666666">.</span>pop(pop_index)   <span style="color: #408080; font-style: italic"># Pop item from the start of the list </span>
+    valid <span style="color: #666666">=</span> is_valid(current)
+    <span style="color: #008000; font-weight: bold">if</span> valid <span style="color: #666666">==</span> SOLUTION:
+      sols<span style="color: #666666">.</span>append( current)
+      g<span style="color: #666666">.</span>node( <span style="color: #008000">str</span>(current), shape<span style="color: #666666">=</span><span style="color: #BA2121">&#39;box&#39;</span>)
+      <span style="color: #008000; font-weight: bold">if</span> parent <span style="color: #AA22FF; font-weight: bold">is</span> <span style="color: #AA22FF; font-weight: bold">not</span> <span style="color: #008000; font-weight: bold">None</span> <span style="color: #AA22FF; font-weight: bold">and</span> <span style="color: #008000">len</span>(parent) <span style="color: #666666">&gt;</span> <span style="color: #666666">0</span>:
+        g<span style="color: #666666">.</span>edge( <span style="color: #008000">str</span>(parent[<span style="color: #666666">-1</span>]), <span style="color: #008000">str</span>(current) )
+        g<span style="color: #666666">.</span>render( <span style="color: #BA2121">f&quot;</span><span style="color: #BB6688; font-weight: bold">{</span><span style="color: #008000">dir</span><span style="color: #BB6688; font-weight: bold">}</span><span style="color: #BA2121">/g1_</span><span style="color: #BB6688; font-weight: bold">{</span>img<span style="color: #BB6688; font-weight: bold">:</span><span style="color: #BA2121">05d</span><span style="color: #BB6688; font-weight: bold">}</span><span style="color: #BA2121">&quot;</span>,<span style="color: #008000">format</span><span style="color: #666666">=</span><span style="color: #BA2121">&#39;png&#39;</span> )
+        img <span style="color: #666666">=</span> img <span style="color: #666666">+</span> <span style="color: #666666">1</span>
+        <span style="color: #008000; font-weight: bold">if</span> first_solution:
+          <span style="color: #008000; font-weight: bold">return</span> num_nodes, sols, g
+    <span style="color: #008000; font-weight: bold">elif</span> valid <span style="color: #666666">==</span> POSSIBLE_SOLUTION: 
+      g<span style="color: #666666">.</span>node( <span style="color: #008000">str</span>(current) )   
+      <span style="color: #008000; font-weight: bold">if</span> parent <span style="color: #AA22FF; font-weight: bold">is</span> <span style="color: #AA22FF; font-weight: bold">not</span> <span style="color: #008000; font-weight: bold">None</span> <span style="color: #AA22FF; font-weight: bold">and</span> <span style="color: #008000">len</span>(parent) <span style="color: #666666">&gt;</span> <span style="color: #666666">0</span>:
+        g<span style="color: #666666">.</span>edge( <span style="color: #008000">str</span>(parent[<span style="color: #666666">-1</span>]), <span style="color: #008000">str</span>(current) )
+        g<span style="color: #666666">.</span>render( <span style="color: #BA2121">f&quot;</span><span style="color: #BB6688; font-weight: bold">{</span><span style="color: #008000">dir</span><span style="color: #BB6688; font-weight: bold">}</span><span style="color: #BA2121">/g1_</span><span style="color: #BB6688; font-weight: bold">{</span>img<span style="color: #BB6688; font-weight: bold">:</span><span style="color: #BA2121">05d</span><span style="color: #BB6688; font-weight: bold">}</span><span style="color: #BA2121">&quot;</span>,<span style="color: #008000">format</span><span style="color: #666666">=</span><span style="color: #BA2121">&#39;png&#39;</span> )
+        img <span style="color: #666666">=</span> img <span style="color: #666666">+</span> <span style="color: #666666">1</span>
+      <span style="color: #408080; font-style: italic">#print(&quot;   &quot; * level, current)</span>
+      <span style="color: #008000; font-weight: bold">for</span> bi <span style="color: #AA22FF; font-weight: bold">in</span> <span style="color: #008000">range</span>(<span style="color: #008000">len</span>(current)): <span style="color: #408080; font-style: italic">#-1,-1,-1):</span>
+        <span style="color: #008000; font-weight: bold">if</span> current[bi] <span style="color: #AA22FF; font-weight: bold">is</span> <span style="color: #008000; font-weight: bold">None</span>:
+          <span style="color: #008000; font-weight: bold">for</span> nb <span style="color: #AA22FF; font-weight: bold">in</span> <span style="color: #008000">range</span>(n_brothers, <span style="color: #666666">0</span>,<span style="color: #666666">-1</span>):
+            <span style="color: #008000; font-weight: bold">if</span> nb <span style="color: #AA22FF; font-weight: bold">not</span> <span style="color: #AA22FF; font-weight: bold">in</span> current:
+              <span style="color: #008000">next</span> <span style="color: #666666">=</span> current<span style="color: #666666">.</span>copy()
+              <span style="color: #008000">next</span>[bi] <span style="color: #666666">=</span> nb
+              queue<span style="color: #666666">.</span>append( (<span style="color: #008000">next</span>, level<span style="color: #666666">+1</span>, parent<span style="color: #666666">.</span>copy() <span style="color: #666666">+</span> [ current ] ) )              
+              num_nodes <span style="color: #666666">=</span> num_nodes <span style="color: #666666">+</span> <span style="color: #666666">1</span>
+          <span style="color: #008000; font-weight: bold">break</span>
+    <span style="color: #008000; font-weight: bold">else</span>:
+      g<span style="color: #666666">.</span>node( <span style="color: #008000">str</span>(current ), style<span style="color: #666666">=</span><span style="color: #BA2121">&#39;filled&#39;</span>, fillcolor<span style="color: #666666">=</span><span style="color: #BA2121">&quot;lightgray&quot;</span> )
+      <span style="color: #008000; font-weight: bold">if</span> parent <span style="color: #AA22FF; font-weight: bold">is</span> <span style="color: #AA22FF; font-weight: bold">not</span> <span style="color: #008000; font-weight: bold">None</span> <span style="color: #AA22FF; font-weight: bold">and</span> <span style="color: #008000">len</span>(parent) <span style="color: #666666">&gt;</span> <span style="color: #666666">0</span>:
+        g<span style="color: #666666">.</span>edge( <span style="color: #008000">str</span>(parent[<span style="color: #666666">-1</span>]), <span style="color: #008000">str</span>(current),  )
+        g<span style="color: #666666">.</span>render( <span style="color: #BA2121">f&quot;</span><span style="color: #BB6688; font-weight: bold">{</span><span style="color: #008000">dir</span><span style="color: #BB6688; font-weight: bold">}</span><span style="color: #BA2121">/g1_</span><span style="color: #BB6688; font-weight: bold">{</span>img<span style="color: #BB6688; font-weight: bold">:</span><span style="color: #BA2121">05d</span><span style="color: #BB6688; font-weight: bold">}</span><span style="color: #BA2121">&quot;</span>,<span style="color: #008000">format</span><span style="color: #666666">=</span><span style="color: #BA2121">&#39;png&#39;</span> )
+        img <span style="color: #666666">=</span> img <span style="color: #666666">+</span> <span style="color: #666666">1</span>
+
+  <span style="color: #008000; font-weight: bold">return</span> num_nodes, sols, g
+
+num_nodes_slow <span style="color: #666666">=</span> <span style="color: #666666">0</span>
+num_nodes_csp <span style="color: #666666">=</span> <span style="color: #666666">0</span>
+
+n_brothers <span style="color: #666666">=</span> <span style="color: #666666">5</span>
+num_nodes_dfs, _ , g<span style="color: #666666">=</span> bickering_brothers_csp( n_brothers, <span style="color: #008000; font-weight: bold">True</span>, <span style="color: #008000; font-weight: bold">True</span> )
+dfs1 <span style="color: #666666">=</span> addJBGraph( <span style="color: #BA2121">&quot;dfs1&quot;</span>, <span style="color: #666666">0</span>, <span style="color: #666666">0</span>, g )
+
+num_nodes_bfs, _ , g<span style="color: #666666">=</span> bickering_brothers_csp( n_brothers, <span style="color: #008000; font-weight: bold">True</span>, <span style="color: #008000; font-weight: bold">False</span> )
+bfs1 <span style="color: #666666">=</span> addJBGraph( <span style="color: #BA2121">&quot;bfs1&quot;</span>, <span style="color: #666666">0</span>, <span style="color: #666666">0</span>, g )
+
+<span style="color: #008000">print</span>( <span style="color: #BA2121">f&#39;Solutions for </span><span style="color: #BB6688; font-weight: bold">{</span>n_brothers<span style="color: #BB6688; font-weight: bold">}</span><span style="color: #BA2121"> number of nodes dfs </span><span style="color: #BB6688; font-weight: bold">{</span>num_nodes_dfs<span style="color: #BB6688; font-weight: bold">}</span><span style="color: #BA2121"> bfs </span><span style="color: #BB6688; font-weight: bold">{</span>num_nodes_bfs<span style="color: #BB6688; font-weight: bold">}</span><span style="color: #BA2121">&#39;</span> )
+</pre></div>
+
+</div><!-- end of style="font-size:0.5em" -->
+</div><!-- end of jb-input-code jb-render -->
+
+</div>
+<div class="jb-print jb-render">
+<div style="font-size:0.5em"><!-- start of style="font-size:0.5em" -->
+<div class="jb-output jb-render code" style="text-align:center">
+<div class="jb-stdout code" style="display:inline-block; width:90%">
+<pre style="font-size:0.5em">
+Solutions for 5 number of nodes dfs 55 bfs 38
+</pre>
+</div>
+</div>
+
+</div><!-- end of style="font-size:0.5em" -->
+</div><!-- end of jb-print jb-render -->
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-32c77a3b-a7c9-4c72-b1c2-468263232779" ><span id="id-32c77a3b-a7c9-4c72-b1c2-468263232779"><img id="img-id-32c77a3b-a7c9-4c72-b1c2-468263232779"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-48a9a2d5-d139-4108-b653-d448a4b1543b" ><span id="id-48a9a2d5-d139-4108-b653-d448a4b1543b"><img id="img-id-48a9a2d5-d139-4108-b653-d448a4b1543b" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00005_frag_00001" data-state="slide_00005_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Breadth First Search and Trees</h1>
+
+<table>
+<tr>
+<td>
+<span id="id-dc1de35d-220e-4829-91e3-a914c90118f6" ><span id="id-dc1de35d-220e-4829-91e3-a914c90118f6"><img id="img-id-dc1de35d-220e-4829-91e3-a914c90118f6"     src="assets/images/dfs1.svg"/></span>
+</span>
+
+</td>
+<td>
+<span id="id-6d0a995e-c8f4-4902-9d9a-ae5b19ee620c" ><span id="id-6d0a995e-c8f4-4902-9d9a-ae5b19ee620c"><img id="img-id-6d0a995e-c8f4-4902-9d9a-ae5b19ee620c"     src="assets/images/bfs1.svg"/></span>
+</span>
+
+</td>
+</tr>
+</table>
+
+<div class="jb-text">
+<ul>
+<li></li>
+</ul>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-14418bdf-7825-49fe-925d-7bff58f86926" ><span id="id-14418bdf-7825-49fe-925d-7bff58f86926"><img id="img-id-14418bdf-7825-49fe-925d-7bff58f86926"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-7c5c8973-d780-4522-bca8-2528cbae7901" ><span id="id-7c5c8973-d780-4522-bca8-2528cbae7901"><img id="img-id-7c5c8973-d780-4522-bca8-2528cbae7901" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00006_frag_00001" data-state="slide_00006_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Analysis of Search Tree</h1>
+
+<div class="jb-text">
+<ul>
+<li>Branching factor <b>b</b> is the averagre number of children for all the nodes in the tree</li>
+<li>Depth of the tree <b>d</b> is the number of levels in the tree</li>
+<li>Important result is that the number of leaf nodes
+\[
+  N = b ^ d                                                       
+\]
+<li>Estimate of the difficulty of the problem</li>
+<li>Technically, we must also include the nodes in the upper parts of the tree
+\[
+  W = \sum_{i=0}^d b^i
+\]
+<li>Assume that the branching factor is 2, then we are dealing with a binary tree</li>
+<li>
+\[
+\sum_{i=0}^d 2^i = 2^{i+1} - 1 
+\]
+</ul>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-e8e28969-afd7-4b38-be0c-f959e831244b" ><span id="id-e8e28969-afd7-4b38-be0c-f959e831244b"><img id="img-id-e8e28969-afd7-4b38-be0c-f959e831244b"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-94bc6870-9053-4bc2-8a78-d1217f97797a" ><span id="id-94bc6870-9053-4bc2-8a78-d1217f97797a"><img id="img-id-94bc6870-9053-4bc2-8a78-d1217f97797a" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00007_frag_00001" data-state="slide_00007_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+
+<div class="jb-text">
+<ul>
+<li>The Eddington number is the estimated number of hydrogen atoms in the universe</li>
+<li>Eddingotn number is \( 10^{80} \) = \( 2 ^ {265} \)</li>
+<li>So for finding a solution, the computational complexity explodes even for small branching factor b</li>
+<li>If there is many solution, then maybe you can work in this space and find one</li>
+<li>For example, if a space of size \( 10^{80} \), but there are \( 10^{79} \) solutions, then your chance of finding a solution by chance is
+10%. In this case, you would use generate-and-test approach, where you generate a solution and test it. 
+If it fails, then you generate another solution.</li>
+</ul>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-3a6f7e6e-b5c5-4d03-8ff7-48fa9c23afc5" ><span id="id-3a6f7e6e-b5c5-4d03-8ff7-48fa9c23afc5"><img id="img-id-3a6f7e6e-b5c5-4d03-8ff7-48fa9c23afc5"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-e7b0d1b2-6c42-44c5-9d98-2063cc4f8504" ><span id="id-e7b0d1b2-6c42-44c5-9d98-2063cc4f8504"><img id="img-id-e7b0d1b2-6c42-44c5-9d98-2063cc4f8504" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00008_frag_00001" data-state="slide_00008_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<h1>Disadvantage of Breadth First Search</h1>
+
+<div class="jb-text">
+<ul>
+<li>Breadth First Search is only suitable for small problems, because the amount of
+memory that it needs is also exponential in the depth of the search</li>
+<li>Depth First Search must remember which nodes were expanded already as it goes through the tree</li>
+<ul>
+<li>Memory complexity of DFS is \( b * d \)</li>
+</ul>
+<li>Breadth First Search must remember all the nodes at each level</li>
+<ul>
+<li>Memory complexity of BFS is \( b^d \)</li>
+</ul>
+</ul>
+</div>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-b66c52a4-37be-41b1-bd24-d20eeb533015" ><span id="id-b66c52a4-37be-41b1-bd24-d20eeb533015"><img id="img-id-b66c52a4-37be-41b1-bd24-d20eeb533015"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-f33b40d8-9c62-414e-bad1-4eefb8ee434b" ><span id="id-f33b40d8-9c62-414e-bad1-4eefb8ee434b"><img id="img-id-f33b40d8-9c62-414e-bad1-4eefb8ee434b" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+<section id="slide_00009_frag_00001" data-state="slide_00009_frag_00001">
+
+
+<!-- Header -->
+  
+
+<!-- Background -->
+
+
+<!-- Slide -->
+<div class="jb-slide">
+
+<div class="jb-output-code jb-render">
+
+<!-- start embedded style -->
+
+<!-- end embedded style -->
+<div class="jb-output jb-render">
+
+<code>
+<pre>
+Depth  1 Time 1.00 msec                                Mem (DFS) 100B                 Mem (BFS) 100B                
+Depth  2 Time 8.00 msec                                Mem (DFS) 200B                 Mem (BFS) 800B                
+Depth  3 Time 57.00 msec                               Mem (DFS) 300B                 Mem (BFS) 5KB 580B            
+Depth  4 Time 400.00 msec                              Mem (DFS) 400B                 Mem (BFS) 39KB 64B            
+Depth  5 Time 2.0s 801.00 msec                         Mem (DFS) 500B                 Mem (BFS) 273KB 548B          
+Depth  6 Time 19.0s 608.00 msec                        Mem (DFS) 600B                 Mem (BFS) 1MB 890KB 864B      
+Depth  7 Time 2.0m 17.0s 257.00 msec                   Mem (DFS) 700B                 Mem (BFS) 13MB 92KB 4B        
+Depth  8 Time 16.0m 800.00 msec                        Mem (DFS) 800B                 Mem (BFS) 91MB 644KB 128B     
+Depth  9 Time 1.0h 52.0m 5.0s 601.00 msec              Mem (DFS) 900B                 Mem (BFS) 641MB 412KB 996B    
+Depth 10 Time 13.0h 4.0m 39.0s 208.00 msec             Mem (DFS) 1000B                Mem (BFS) 4GB 393MB 842KB     
+Depth 11 Time 3.0d 19.0h 32.0m 34.0s                   Mem (DFS) 1KB 76B              Mem (BFS) 30GB 708MB 780KB    
+Depth 12 Time 0.0y 26.0d 16.0h 48.0m                   Mem (DFS) 1KB 176B             Mem (BFS) 214GB 865MB 343KB   
+Depth 13 Time 0.0y 186.0d 21.0h 36.0m                  Mem (DFS) 1KB 276B             Mem (BFS) 1TB 479GB 937MB     
+Depth 14 Time 3.0y 212.0d 13.0h 12.0m                  Mem (DFS) 1KB 376B             Mem (BFS) 10TB 287GB 417MB    
+Depth 15 Time 25.0y 26.0d 20.0h 30.0m                  Mem (DFS) 1KB 476B             Mem (BFS) 71TB 987GB 873MB    
+Depth 16 Time 1.0c 75.0y 187.0d 23.0h                  Mem (DFS) 1KB 576B             Mem (BFS) 503TB 770GB 997MB   
+Depth 17 Time 1.0m 2.0c 28.0y 220.0d                   Mem (DFS) 1KB 676B             Mem (BFS) 3526TB 276GB 840MB  
+Depth 18 Time 8.0m 6.0c 0.0y 79.0d                     Mem (DFS) 1KB 776B             Mem (BFS) 24683TB 913GB 760MB 
+Depth 19 Time 60.0m 2.0c 1.0y 194.0d                   Mem (DFS) 1KB 876B             Mem (BFS) 172787TB 252GB 201MB
+Depth 20 Time 421.0m 4.0c 10.0y 264.0d                 Mem (DFS) 1KB 976B             Mem (BFS) 1209510TB 741GB 387MB
+Depth 21 Time 2949.0m 8.0c 75.0y 23.0d                 Mem (DFS) 2KB 52B              Mem (BFS) 8466575TB 69GB 663MB
+Depth 22 Time 20649.0m 1.0c 25.0y 165.0d               Mem (DFS) 2KB 152B             Mem (BFS) 59266025TB 487GB 547MB
+Depth 23 Time 144543.0m 8.0c 78.0y 65.0d               Mem (DFS) 2KB 252B             Mem (BFS) 414862178TB 340GB 762MB
+Depth 24 Time 1011807.0m 1.0c 47.0y 91.0d              Mem (DFS) 2KB 352B             Mem (BFS) 2904035248TB 337GB 218MB
+
+</pre>
+</code>
+</div><!-- end of jb-output jb-render -->
+</div><!-- end of jb-output-code jb-render -->
+
+
+</div>
+<!-- Footer -->
+
+<div class="jb-footer-left plain">
+    <span id="id-e7b56ca0-54fa-4c4a-888c-e34ef51fa762" ><span id="id-e7b56ca0-54fa-4c4a-888c-e34ef51fa762"><img id="img-id-e7b56ca0-54fa-4c4a-888c-e34ef51fa762"     src="assets/images/logo.png"/></span>
+</span>
+
+</div>
+<div class="jb-footer-right plain">
+    <span id="id-7314fa27-10e5-4628-83d5-4e0483c769ac" ><span id="id-7314fa27-10e5-4628-83d5-4e0483c769ac"><img id="img-id-7314fa27-10e5-4628-83d5-4e0483c769ac" width="162" height="138"   src="assets/images/robbi.png"/></span>
+</span>
+
+</div>
+
+<aside class="notes">
+
+</aside>
+
+
+
+</section>
+        </div>
+        </div>
+
+        <script src="js/reveal.js"></script>
+
+        <script>
+            // More info about config & dependencies:
+            // - https://github.com/hakimel/reveal.js#configuration
+            // - https://github.com/hakimel/reveal.js#dependencies
+            Reveal.initialize({
+                math: {
+                    mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+                    config: 'TeX-AMS_HTML-full',  // See http://docs.mathjax.org/en/latest/config-files.html
+                    // tex2jax: {
+                    //     inlineMath: [['$', '$'], ['\(', '\)']],
+                    //     displayMath: [['$$', '$$'], ['\[', '\]']],
+                    //     processEscapes: true,
+                    //     processEnvironments: true,
+                    //     skipTags: ['script', 'noscript', 'style', 'textarea', 'code', 'pre'],
+                    //     displayAlign: 'center',
+                    // }                
+                },
+                dependencies: [
+                    { src: 'plugin/markdown/marked.js' },
+                    { src: 'plugin/markdown/markdown.js' },
+                    { src: 'plugin/notes/notes.js', async: true },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'plugin/math/math.js', async: true }
+                ]
+            });
+        </script>
+
+        <script>
+            <!-- Assets -->
+var assets = {
+"robbi" : new JBImage( "robbi", "12677", "162", "138", null, null, "assets/images/robbi", "png" ),
+"logo" : new JBImage( "logo", "12033", "0", "0", null, null, "assets/images/logo", "png" ),
+"fira-logo-1" : new JBImage( "fira-logo-1", "93836", "0", "0", null, null, "assets/images/FIRA-logo-1", "png" ),
+"pairLogo" : new JBImage( "pairLogo", "63051", "0", "0", null, null, "assets/images/pairLogo", "png" ),
+"dfs1" : new JBImage( "dfs1", "37127", "0", "0", null, null, "assets/images/dfs1", "svg" ),
+"bfs1" : new JBImage( "bfs1", "8648", "0", "0", null, null, "assets/images/bfs1", "svg" ) 
+};
+var assetInstances = {
+    "id-62c85269-c60f-467e-80b2-9bd9fa47484d": assets["robbi"],
+    "id-8ced9d2d-3288-44a1-b066-1733fc539b4c": assets["robbi"],
+    "id-48a9a2d5-d139-4108-b653-d448a4b1543b": assets["robbi"],
+    "id-7c5c8973-d780-4522-bca8-2528cbae7901": assets["robbi"],
+    "id-94bc6870-9053-4bc2-8a78-d1217f97797a": assets["robbi"],
+    "id-e7b0d1b2-6c42-44c5-9d98-2063cc4f8504": assets["robbi"],
+    "id-f33b40d8-9c62-414e-bad1-4eefb8ee434b": assets["robbi"],
+    "id-7314fa27-10e5-4628-83d5-4e0483c769ac": assets["robbi"],
+    "id-fd5f8b0d-ee2f-4d8c-901e-a2ee2bb449df": assets["logo"],
+    "id-dd8a31d2-952a-4ced-95b6-25f4eea2eac5": assets["logo"],
+    "id-32c77a3b-a7c9-4c72-b1c2-468263232779": assets["logo"],
+    "id-14418bdf-7825-49fe-925d-7bff58f86926": assets["logo"],
+    "id-e8e28969-afd7-4b38-be0c-f959e831244b": assets["logo"],
+    "id-3a6f7e6e-b5c5-4d03-8ff7-48fa9c23afc5": assets["logo"],
+    "id-b66c52a4-37be-41b1-bd24-d20eeb533015": assets["logo"],
+    "id-e7b56ca0-54fa-4c4a-888c-e34ef51fa762": assets["logo"],
+    "id-dc1de35d-220e-4829-91e3-a914c90118f6": assets["dfs1"],
+    "id-6d0a995e-c8f4-4902-9d9a-ae5b19ee620c": assets["bfs1"]
+};
+<!-- End of Assets -->
+
+            convertURLs(assetInstances, "smart-path");
+        </script>
+        <script>
+            <!-- Characters -->
+var characters =
+{};
+<!-- End of Characters -->
+
+        </script>
+    </body>
+</html>
